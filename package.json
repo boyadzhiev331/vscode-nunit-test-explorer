@@ -3,7 +3,7 @@
   "displayName": "Visual Studio like NUnit Test Explorer",
   "icon": "resources/icon.png",
   "description": "A Visual Studio Code extension for exploring and running NUnit tests. Similar to the Visual Studio test explorer.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "obey31",
   "license": "MIT",
   "repository": {
