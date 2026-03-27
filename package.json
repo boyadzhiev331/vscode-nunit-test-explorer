@@ -1,14 +1,20 @@
 {
-  "name": "default",
-  "displayName": "nunit-test-explorer",
+  "name": "nunit-test-explorer",
+  "displayName": "NUnit Test Explorer",
   "icon": "resources/icon.png",
-  "description": "",
+  "description": "A Visual Studio Code extension for exploring and running NUnit tests. Similar to the Visual Studio test explorer.",
   "version": "0.0.1",
+  "publisher": "obey31",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boyadzhiev331/vscode-nunit-test-explorer.git"
+  },
   "engines": {
     "vscode": "^1.110.0"
   },
   "categories": [
-    "Other"
+    "Testing"
   ],
   "activationEvents": [
     "onView:nunitTestsView",
