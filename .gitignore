@@ -23,6 +23,7 @@ Thumbs.db
 # IDE / editors
 .vscode/
 .idea/
+.vscode-test/
 
 # TypeScript
 *.tsbuildinfo
