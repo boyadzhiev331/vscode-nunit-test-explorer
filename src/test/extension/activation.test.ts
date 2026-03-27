@@ -19,6 +19,7 @@ suite('extension/activation', () => {
       'extension.debugCategory',
       'extension.showNodeDetails',
       'extension.clearNodeResults',
+      'extension.revealInNUnitTestExplorer',
       'nunitTestsView.filter'
     ];
 

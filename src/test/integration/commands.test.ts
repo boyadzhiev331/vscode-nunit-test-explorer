@@ -55,4 +55,28 @@ suite('integration/commands', () => {
 
     assert.ok(true, 'Details and clear commands should execute without throwing');
   });
+
+  test('revealInNUnitTestExplorer executes from active editor selection', async () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'nunit-ext-reveal-'));
+    const testFile = path.join(root, 'RevealTests.cs');
+    fs.writeFileSync(
+      testFile,
+      [
+        'using NUnit.Framework;',
+        'public class RevealTests',
+        '{',
+        '    [Test]',
+        '    public void ShouldReveal() { }',
+        '}'
+      ].join('\n'),
+      'utf8'
+    );
+
+    const document = await vscode.workspace.openTextDocument(vscode.Uri.file(testFile));
+    const editor = await vscode.window.showTextDocument(document);
+    editor.selection = new vscode.Selection(new vscode.Position(4, 10), new vscode.Position(4, 10));
+
+    await vscode.commands.executeCommand('extension.revealInNUnitTestExplorer');
+    assert.ok(true, 'Reveal command should not throw from editor context');
+  });
 });

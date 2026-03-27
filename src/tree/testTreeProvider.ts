@@ -11,6 +11,7 @@ export class TestTreeProvider implements vscode.TreeDataProvider<TestItem> {
 
   refresh(): void { this._onDidChangeTreeData.fire(); }
   getTreeItem(element: TestItem): vscode.TreeItem { return element; }
+  getParent(element: TestItem): TestItem | undefined { return element.parent; }
 
   setFilter(mode: 'none' | 'category' | 'test', value: string): void {
     this.filterMode = mode;
@@ -209,6 +210,7 @@ export class TestTreeProvider implements vscode.TreeDataProvider<TestItem> {
 
 export class TestItem extends vscode.TreeItem {
   children?: TestItem[];
+  parent?: TestItem;
   uri?: vscode.Uri;
   range?: vscode.Range;
   className?: string;
@@ -229,6 +231,10 @@ export class TestItem extends vscode.TreeItem {
     this.range = range;
     this.className = className;
     this.contextValue = type;
+
+    for (const child of this.children ?? []) {
+      child.parent = this;
+    }
 
     if (type === 'test' && uri && range) {
       this.command = { command: 'vscode.open', title: 'Go to Test', arguments: [uri, { selection: range }] };

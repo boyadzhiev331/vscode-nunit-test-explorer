@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import {
   StackFrameTarget,
   TestCaseTarget,
   TestCommandTarget,
   TestSummaryCounts
 } from './core/types';
+import { extractTestsWithCategoryFromClass } from './tree/testDiscovery';
 import { TestItem, TestTreeProvider } from './tree/testTreeProvider';
 import { TestDetailsWebviewProvider, TestFilterWebviewProvider } from './webviews/testWebviewProviders';
 import { NUnitGutterIconDecorator, NUnitGutterTestController } from './testing/nunitRuntime';
@@ -66,6 +68,11 @@ export function activate(context: vscode.ExtensionContext) {
     await openFilterMenu(provider);
   });
   context.subscriptions.push(filterCommand);
+
+  const revealInExplorerCommand = vscode.commands.registerCommand('extension.revealInNUnitTestExplorer', async (uri?: vscode.Uri) => {
+    await revealInNUnitTestExplorer(treeView, provider, uri);
+  });
+  context.subscriptions.push(revealInExplorerCommand);
 
   const gutterDecorator = new NUnitGutterIconDecorator(context.extensionUri);
   context.subscriptions.push(gutterDecorator);
@@ -415,4 +422,122 @@ function buildSummaryCountsForItem(item: TestItem, gutterDecorator: NUnitGutterI
   }
 
   return counts;
+}
+
+async function revealInNUnitTestExplorer(
+  treeView: vscode.TreeView<TestItem>,
+  provider: TestTreeProvider,
+  uriFromContext?: vscode.Uri
+): Promise<void> {
+  const activeEditor = vscode.window.activeTextEditor;
+  const uri = uriFromContext ?? activeEditor?.document.uri;
+  if (!uri) {
+    return;
+  }
+
+  const document = activeEditor && activeEditor.document.uri.toString() === uri.toString()
+    ? activeEditor.document
+    : await vscode.workspace.openTextDocument(uri);
+
+  const cursorLine = activeEditor && activeEditor.document.uri.toString() === uri.toString()
+    ? activeEditor.selection.active.line
+    : 0;
+
+  const tests = extractTestsWithCategoryFromClass(document.getText(), path.basename(document.fileName));
+  if (!tests.length) {
+    vscode.window.showInformationMessage('No NUnit tests found in this file.');
+    return;
+  }
+
+  const testAtCursor = pickTestForCursorLine(tests, cursorLine);
+  const treeItem = await findTestItemInTree(provider, uri.fsPath, testAtCursor.name, testAtCursor.lineNumber);
+  if (!treeItem) {
+    vscode.window.showWarningMessage(`Could not reveal test "${testAtCursor.name}" in NUnit Test Explorer.`);
+    return;
+  }
+
+  await treeView.reveal(treeItem, {
+    select: true,
+    focus: true,
+    expand: 3
+  });
+}
+
+export function pickTestForCursorLine(
+  tests: Array<{ name: string; lineNumber: number }>,
+  cursorLine: number
+): { name: string; lineNumber: number } {
+  const ordered = [...tests].sort((a, b) => a.lineNumber - b.lineNumber);
+  if (!ordered.length) {
+    return { name: '', lineNumber: 0 };
+  }
+
+  if (cursorLine <= ordered[0].lineNumber) {
+    return ordered[0];
+  }
+
+  for (let i = 0; i < ordered.length; i++) {
+    const current = ordered[i];
+    const next = ordered[i + 1];
+    if (!next || (cursorLine >= current.lineNumber && cursorLine < next.lineNumber)) {
+      return current;
+    }
+  }
+
+  return ordered[ordered.length - 1];
+}
+
+export async function findTestItemInTree(
+  provider: TestTreeProvider,
+  filePath: string,
+  testName: string,
+  lineNumber: number
+): Promise<TestItem | undefined> {
+  const roots = await provider.getChildren();
+  for (const root of roots) {
+    const found = await findTestItemRecursive(provider, root, filePath, testName, lineNumber);
+    if (found) {
+      return found;
+    }
+  }
+
+  return undefined;
+}
+
+async function findTestItemRecursive(
+  provider: TestTreeProvider,
+  item: TestItem,
+  filePath: string,
+  testName: string,
+  lineNumber: number
+): Promise<TestItem | undefined> {
+  if (item.contextValue === 'test' && item.uri && item.range) {
+    const labelValue = item.label;
+    const label = typeof labelValue === 'string' ? labelValue : labelValue?.label ?? '';
+    const isSameFile = isSamePath(item.uri.fsPath, filePath);
+    const sameLine = item.range.start.line === lineNumber;
+    const sameName = label === testName;
+
+    if (isSameFile && (sameLine || sameName)) {
+      return item;
+    }
+  }
+
+  const children = await provider.getChildren(item);
+  for (const child of children) {
+    const found = await findTestItemRecursive(provider, child, filePath, testName, lineNumber);
+    if (found) {
+      return found;
+    }
+  }
+
+  return undefined;
+}
+
+export function isSamePath(left: string, right: string): boolean {
+  if (process.platform === 'win32') {
+    return left.toLowerCase() === right.toLowerCase();
+  }
+
+  return left === right;
 }
