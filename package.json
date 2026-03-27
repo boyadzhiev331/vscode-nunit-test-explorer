@@ -1,6 +1,7 @@
 {
   "name": "default",
   "displayName": "nunit-test-explorer",
+  "icon": "resources/icon.png",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -129,7 +130,7 @@
         {
           "id": "nunit-tests",
           "title": "NUnit",
-          "icon": "resources/test.svg"
+          "icon": "resources/activitybar.svg"
         }
       ]
     },
