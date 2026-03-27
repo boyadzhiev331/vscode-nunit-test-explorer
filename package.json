@@ -1,0 +1,173 @@
+{
+  "name": "default",
+  "displayName": "nunit-test-explorer",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.110.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:nunitTestsView",
+    "workspaceContains:**/*.csproj",
+    "onLanguage:csharp"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.runTest",
+        "title": "Run Test",
+        "icon": "resources/run.svg"
+      },
+      {
+        "command": "extension.debugTest",
+        "title": "Debug Test",
+        "icon": "resources/debug.svg"
+      },
+      {
+        "command": "extension.runClass",
+        "title": "Run Class",
+        "icon": "resources/run.svg"
+      },
+      {
+        "command": "extension.debugClass",
+        "title": "Debug Class",
+        "icon": "resources/debug.svg"
+      },
+      {
+        "command": "extension.runCategory",
+        "title": "Run Category",
+        "icon": "resources/run.svg"
+      },
+      {
+        "command": "extension.debugCategory",
+        "title": "Debug Category",
+        "icon": "resources/debug.svg"
+      },
+      {
+        "command": "extension.showNodeDetails",
+        "title": "Show Details",
+        "icon": "resources/details.svg"
+      },
+      {
+        "command": "extension.clearNodeResults",
+        "title": "Clear Results",
+        "icon": "resources/clear.svg"
+      },
+      {
+        "command": "nunitTestsView.filter",
+        "title": "Filter Tests",
+        "icon": "$(filter)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "nunitTestsView.filter",
+          "when": "view == nunitTestsView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "extension.runTest",
+          "when": "viewItem == test",
+          "group": "inline"
+        },
+        {
+          "command": "extension.debugTest",
+          "when": "viewItem == test",
+          "group": "inline"
+        },
+        {
+          "command": "extension.runClass",
+          "when": "viewItem == class",
+          "group": "inline"
+        },
+        {
+          "command": "extension.debugClass",
+          "when": "viewItem == class",
+          "group": "inline"
+        },
+        {
+          "command": "extension.showNodeDetails",
+          "when": "viewItem == class",
+          "group": "inline"
+        },
+        {
+          "command": "extension.clearNodeResults",
+          "when": "viewItem == class",
+          "group": "inline"
+        },
+        {
+          "command": "extension.runCategory",
+          "when": "viewItem == category",
+          "group": "inline"
+        },
+        {
+          "command": "extension.debugCategory",
+          "when": "viewItem == category",
+          "group": "inline"
+        },
+        {
+          "command": "extension.showNodeDetails",
+          "when": "viewItem == category",
+          "group": "inline"
+        },
+        {
+          "command": "extension.clearNodeResults",
+          "when": "viewItem == category",
+          "group": "inline"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "nunit-tests",
+          "title": "NUnit",
+          "icon": "resources/test.svg"
+        }
+      ]
+    },
+    "views": {
+      "nunit-tests": [
+        {
+          "id": "nunitTestsView.filterInput",
+          "name": "Filter",
+          "type": "webview"
+        },
+        {
+          "id": "nunitTestsView",
+          "name": "Tests"
+        },
+        {
+          "id": "nunitTestsView.details",
+          "name": "Details",
+          "type": "webview"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.110.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.56.1",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}
