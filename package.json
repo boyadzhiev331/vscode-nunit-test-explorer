@@ -1,8 +1,8 @@
 {
-  "name": "visual-studio-like-nunit-test-explorer",
-  "displayName": "Visual Studio like NUnit Test Explorer",
+  "name": "visual-studio-style-nunit-test-explorer",
+  "displayName": "Visual Studio-style NUnit Test Explorer",
   "icon": "resources/icon.png",
-  "description": "A Visual Studio Code extension for exploring and running NUnit tests. Similar to the Visual Studio test explorer.",
+  "description": "Visual Studio–style NUnit Test Explorer for VS Code. Organize and run your NUnit tests by Project → Category → Test Class, filter, debug, and view rich failure details – the only VS Code extension with category sorting.",
   "version": "0.2.0",
   "publisher": "obey31",
   "license": "MIT",
@@ -71,7 +71,8 @@
       },
       {
         "command": "extension.revealInNUnitTestExplorer",
-        "title": "Reveal in NUnit Test Explorer"
+        "title": "Reveal in NUnit Test Explorer",
+        "icon": "$(search)"
       }
     ],
     "menus": {
