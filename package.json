@@ -3,7 +3,7 @@
   "displayName": "Visual Studio-style NUnit Test Explorer",
   "icon": "resources/icon.png",
   "description": "Visual Studio–style NUnit Test Explorer for VS Code. Organize and run your NUnit tests by Project → Category → Test Class, filter, debug, and view rich failure details – the only VS Code extension with category sorting.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "publisher": "obey31",
   "license": "MIT",
   "repository": {
